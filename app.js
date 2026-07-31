@@ -482,7 +482,7 @@ function rysujPunkty() {
   markery = {};
   widoczne().forEach(function (p) {
     var m = L.marker([p.lat, p.lng], { icon: ikonaPunktu(p), title: tytulPunktu(p), draggable: false });
-    m.bindPopup(kartaHTML(p), { maxWidth: 300, autoPanPadding: [18, 18] });
+    m.bindPopup(kartaHTML(p), { maxWidth: 360, minWidth: 300, autoPanPadding: [18, 18] });
     m.bindTooltip(esc(tytulPunktu(p)), {
       permanent: true, direction: 'top', offset: [0, -32],
       className: 'etykieta', opacity: 1
@@ -512,7 +512,23 @@ function wartoscHTML(f, v) {
   if (f.typ === 'email') return '<a href="mailto:' + esc(v) + '">' + esc(v) + '</a>';
   if (f.typ === 'telefon') return '<a href="tel:' + esc(String(v).replace(/\s/g, '')) + '">' + esc(v) + '</a>';
   if (f.typ === 'liczba') return esc(fmtLiczba(v) + (f.jednostka ? ' ' + f.jednostka : ''));
+  if (f.typ === 'data') return esc(fmtData(v));
+  if (f.typ === 'wielolinijkowy') {
+    // najpierw uciekamy HTML, potem łamiemy: przed każdym ETAP nowa linia,
+    // a zwykłe znaki nowej linii z textarea zachowujemy.
+    var t = esc(String(v)).replace(/\r\n?/g, '\n');
+    t = t.replace(/\s*(ETAP\b)/g, '\n$1');          // ETAP zawsze od nowej linii
+    t = t.replace(/^\n+/, '').replace(/\n{3,}/g, '\n\n');
+    return t;                                        // \n zamieni CSS: white-space:pre-line
+  }
   return esc(v);
+}
+
+function fmtData(v) {
+  var s = String(v);
+  var m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);       // ISO z inputa type=date
+  if (m) return m[3] + '.' + m[2] + '.' + m[1];      // 2026-03-01 -> 01.03.2026
+  return s;
 }
 
 function kartaHTML(p) {
@@ -520,7 +536,8 @@ function kartaHTML(p) {
   var wiersze = POLA.filter(function (f) {
     return f.wKarcie && d[f.klucz] !== undefined && d[f.klucz] !== null && String(d[f.klucz]).trim() !== '';
   }).map(function (f) {
-    return '<dt>' + esc(f.etykieta) + '</dt><dd>' + wartoscHTML(f, d[f.klucz]) + '</dd>';
+    var klasa = f.typ === 'wielolinijkowy' ? ' class="dlugi"' : '';
+    return '<dt>' + esc(f.etykieta) + '</dt><dd' + klasa + '>' + wartoscHTML(f, d[f.klucz]) + '</dd>';
   }).join('');
 
   var podpis = p.autor ? ('zmienił ' + p.autor + ' · ' + fmtCzas(p.zmieniono)) : ('zmieniono ' + fmtCzas(p.zmieniono));
