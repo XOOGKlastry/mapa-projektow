@@ -62,6 +62,7 @@ window.KONFIG = {
     { klucz: 'miejscowosc',  etykieta: 'Miejscowość',  typ: 'tekst', wyliczane: true, wKarcie: true, naLiscie: true },
     { klucz: 'adres',        etykieta: 'Adres',        typ: 'tekst', wKarcie: true },
     { klucz: 'podwykonawca', etykieta: 'Podwykonawca', typ: 'tekst', wKarcie: true },
+    { klucz: 'termin',       etykieta: 'Termin realizacji', typ: 'data', wKarcie: true },
     { klucz: 'zakres',       etykieta: 'Zakres',       typ: 'wielolinijkowy', wKarcie: true },
     { klucz: 'notatki',      etykieta: 'Notatki',      typ: 'wielolinijkowy', wKarcie: true }
   ]
