@@ -67,3 +67,4 @@ window.KONFIG = {
     { klucz: 'notatki',      etykieta: 'Notatki',      typ: 'wielolinijkowy', wKarcie: true }
   ]
 };
+ 
