@@ -459,7 +459,8 @@ const czekaj = (ms) => new Promise(r => setTimeout(r, ms));
     await czekaj(10);   // uzupełnienie miejscowości wpisuje się do otwartego formularza
     d.querySelector('[data-pole="nazwa"]').value = 'Karta';
     d.querySelector('[data-pole="podwykonawca"]').value = 'Jakub Kmieć';
-    d.querySelector('[data-pole="zakres"]').value = 'Wymiana opraw i szaf';
+    d.querySelector('[data-pole="termin"]').value = '2026-03-01';
+    d.querySelector('[data-pole="zakres"]').value = 'ETAP I 1. Audyt energetyczny ETAP II 5. Inwentaryzacja';
     d.getElementById('sheetZapisz').click();
     await czekaj(30);
 
@@ -470,7 +471,11 @@ const czekaj = (ms) => new Promise(r => setTimeout(r, ms));
     const karta = win.__markery[win.__markery.length - 1]._popup;
     sprawdz('karta ma nazwę projektu', /Karta/.test(karta));
     sprawdz('karta ma etykietę pola', /Podwykonawca/.test(karta));
-    sprawdz('karta pokazuje zakres', /Wymiana opraw i szaf/.test(karta));
+    sprawdz('karta ma termin realizacji', /Termin realizacji/.test(karta));
+    sprawdz('termin sformatowany po polsku', /01\.03\.2026/.test(karta), karta);
+    sprawdz('karta pokazuje zakres', /Audyt energetyczny/.test(karta));
+    sprawdz('drugi ETAP łamie się do nowej linii', /\nETAP II/.test(karta), JSON.stringify(karta.match(/ETAP[^<]*/g)));
+    sprawdz('długie pole ma klasę przewijania', /dd class="dlugi"/.test(karta));
     sprawdz('karta ma przyciski edycji i usuwania',
       /data-akcja="edytuj"/.test(karta) && /data-akcja="usun"/.test(karta));
     sprawdz('karta nie pokazuje pustych pól', !/Notatki/.test(karta));
